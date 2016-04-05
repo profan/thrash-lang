@@ -1,14 +1,16 @@
 {
-open Ast
+
+  open Ast
+
 }
 
 %token <int> INT
 %token <string> VAR
 %token LPAREN RPAREN 
 %token PLUS MINUS TIMES DIV
-%token IF DO ELSE END WHILE FOR LET EQUAL 
+%token IF DO ELSE END WHILE FOR LET IN EQUAL
 %token SEMICOLON
-%token EOL 
+%token EOF EOL
 
 %relation pi<pt<pp
 
@@ -16,17 +18,18 @@ open Ast
 
 %%
 
-main : expr * { $1 }
+main : expr * EOF { $1 }
 
 expr :
-    | INT<x>                                            { x }                       pi
-    | MINUS expr(=pi)<x>                                { -x }                      pi
-    | LPAREN expr<x> RPAREN                             { x }                       pi
-    | expr(<=pp)<x> PLUS expr(<pp)<y>                   { x + y }                   pp
-    | expr(<=pp)<x> MINUS expr(<pp)<y>                  { x - y }                   pp
-    | expr(<=pt)<x> TIMES expr(<pt)<y>                  { x * y }                   pt
-    | expr(<=pt)<x> DIV expr(<pt)<y>                    { x / y }                   pt
-    | IF expr<cond> DO expr<thn> ELSE expr<els> END     { thn }                     pi
-    | WHILE expr<cond> DO expr<body> END                { body }                    pi
-    | FOR expr<cond> IN expr<list> DO expr<body> END    { body }                    pi
-    | LET VAR EQUAL expr<e>                             { e }                       pi
+  | INT<x>                                            { x }                       pi
+  | VAR<x>                                            { 0 }                       pi
+  | MINUS expr(=pi)<x>                                { -x }                      pi
+  | LPAREN expr<x> RPAREN                             { x }                       pi
+  | expr(<=pp)<x> PLUS expr(<pp)<y>                   { x + y }                   pp
+  | expr(<=pp)<x> MINUS expr(<pp)<y>                  { x - y }                   pp
+  | expr(<=pt)<x> TIMES expr(<pt)<y>                  { x * y }                   pt
+  | expr(<=pt)<x> DIV expr(<pt)<y>                    { x / y }                   pt
+  | IF expr<cond> DO expr<thn> ELSE expr<els> END     { thn }                     pi
+  | WHILE expr<cond> DO expr<body> END                { body }                    pi
+  | FOR expr<cond> IN expr<list> DO expr<body> END    { body }                    pi
+  | LET VAR EQUAL expr<e>                             { e }                       pi

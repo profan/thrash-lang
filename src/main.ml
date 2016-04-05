@@ -15,7 +15,7 @@ let main ch =
         let token_stream = Grammar_parser.main Grammar_lexer.token lexbuf in
             List.iter (fun (t, str) ->
                 List.iter (fun (ti) ->
-                    Printf.printf "result: %d" ti) t) token_stream
+                    Printf.printf "result: %d \n" ti) t) token_stream
     with 
         | Grammar_lexer.Eof -> print_string "EOF"
         (* | Dyp.Syntax_error ->
