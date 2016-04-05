@@ -16,6 +16,10 @@ rule token = parse
   | '/'                 { DIV }
   | '('                 { LPAREN }
   | ')'                 { RPAREN }
+  | '['                 { LBRACKET }
+  | ']'                 { RBRACKET }
+  | "true"              { BOOL(true) }
+  | "false"             { BOOL(false) }
   | "if"                { IF }
   | "do"                { DO }
   | "else"              { ELSE }
@@ -24,9 +28,12 @@ rule token = parse
   | "for"               { FOR }
   | "let"               { LET }
   | "in"                { IN }
-  | "="                 { EQUAL }
-  | ";"                 { SEMICOLON }
+  | '='                 { EQ }
+  | '<'                 { LT }
+  | '>'                 { GT }
+  | ';'                 { SEMICOLON }
+  | ','                 { COMMA }
   | ['a'-'z']* as lxm   { VAR(lxm) }
-  | _                   { raise (SyntaxError("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
   | eof                 { EOF }
   | 'q' | 'e'           { raise Eof }
+  | _                   { raise (SyntaxError("Unexpected char: " ^ Lexing.lexeme lexbuf)) }

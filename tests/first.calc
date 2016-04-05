@@ -6,7 +6,7 @@ else
 	15
 end
 
-for x in list do
+for x in [1, 2, 3, 4] do
 	65
 end
 
