@@ -1,0 +1,4 @@
+_build
+.*.s??
+.vagrant
+main.native

@@ -1,0 +1,19 @@
+let somevar = 125
+
+if 10 do
+	25
+else
+	15
+end
+
+for x in [1, 2, 3, 4] do
+	65
+end
+
+while 10 do
+	if 25 do
+		35
+	else
+		45
+	end
+end
