@@ -28,12 +28,14 @@ rule token = parse
   | "for"               { FOR }
   | "let"               { LET }
   | "in"                { IN }
+  | "and"               { AND }
+  | "or"                { OR }
   | '='                 { EQ }
   | '<'                 { LT }
   | '>'                 { GT }
   | ';'                 { SEMICOLON }
   | ','                 { COMMA }
-  | ['a'-'z']* as lxm   { VAR(lxm) }
+  | ['a'-'z']+ as lxm   { VAR(lxm) }
   | eof                 { EOF }
   | 'q' | 'e'           { raise Eof }
   | _                   { raise (SyntaxError("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
