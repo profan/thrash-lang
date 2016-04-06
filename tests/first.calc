@@ -30,7 +30,7 @@ else
 	x
 end
 
-if x < 25 and y > 0 do
+let result = if x < 25 and y > 0 do
 	x - 25
 else
 	25

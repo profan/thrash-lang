@@ -1,7 +1,4 @@
-let reduce f lst =
-    match lst with
-    | head::tail -> List.fold_left f head tail
-    | [] -> failwith "Empty List?"
+open Util
 
 type value =
     | Bool of bool
@@ -17,7 +14,6 @@ type _ expr' =
     | BinOp : string * 'a expr' * 'a expr' -> 'a expr'
     | UnaryOp : string * 'a expr' -> 'a expr'
     | Let : string * 'a expr' -> 'a expr'
-    | UnaryCmd : 'a expr' -> 'a expr'
 
 let rec print_ast' : type a. a expr' -> string = function
     | Var (var) -> var
@@ -58,8 +54,11 @@ let rec eval' : type a. a expr' -> string = function
         let new_op = match op with
         | "and" -> "-a"
         | "or" -> "-o"
+        | _ -> failwith "impossible case"
         in
             Printf.sprintf "%s %s %s" (eval' a) new_op (eval' b)
+    | BinOp (("+" | "-" | "/" | "*") as op, a, b) ->
+        Printf.sprintf "$(%s %s %s)" (eval' a) op (eval' b)
     | BinOp (op, a, Value(Int(b))) ->
         let new_op = match op with
         | "=" -> "-eq"
@@ -74,5 +73,7 @@ let rec eval' : type a. a expr' -> string = function
         Printf.sprintf "%s %s %s" (eval' a) op (eval' b)
     | UnaryOp (op, a) ->
         Printf.sprintf "%s%s" op (eval' a)
+    | Let (var, If(b, l, r)) ->
+        Printf.sprintf "%s=\"\"" var
     | Let (var, e) ->
-        Printf.sprintf "%s = %s" var (eval' e)
+        Printf.sprintf "%s=%s" var (eval' e)
