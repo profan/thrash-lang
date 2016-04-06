@@ -8,15 +8,20 @@ type _ value' =
     | Var : string -> string value'
     | Int : int -> int value'
 
+type value =
+    | Bool of bool
+    | Var of string
+    | Int of int
+
 type _ expr' =
-    | Value : 'a value' -> 'a expr'
+    | Value : value -> 'a expr'
     | List : 'a expr' list -> 'a expr'
     | If : 'a expr' * 'a expr' * 'a expr' -> 'a expr'
     | While : 'a expr' * 'a expr' -> 'a expr'
     | For : 'a expr' * 'a expr' * 'a expr' -> 'a expr'
     | BinOp : string * 'a expr' * 'a expr' -> 'a expr'
     | UnaryOp : string * 'a expr' -> 'a expr'
-    | Let : string value' * 'a expr' -> 'a expr'
+    | Let : value * 'a expr' -> 'a expr'
 
 let rec eval' : type a. a expr' -> string = function
     | Value (Bool b) -> (string_of_bool b)

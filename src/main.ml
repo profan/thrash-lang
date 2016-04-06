@@ -14,13 +14,12 @@ let main ch =
         Lexing.from_channel ch
         |> Grammar_parser.main Grammar_lexer.token
     with 
-        | Grammar_lexer.Eof -> print_string "EOF"
+        | Grammar_lexer.Eof -> failwith "EOF!"
         (* | Dyp.Syntax_error ->
             let (startpos, endpos) = Dyp.dyplex_lexbuf_position in *) 
 
 let filename = "tests/first.calc";;
 Printf.printf "executing: %s \n" filename;;
-let ast = call_with_input_channel (fun ch -> main ch) filename;;
-
-let compiled = eval' ast;;
-Printf.printf "produced code: %s \n" compiled;;
+call_with_input_channel (fun ch -> main ch) filename
+    |> List.iter (fun (t, str) ->
+        List.iter (fun (ti) -> Ast.eval' ti |> Printf.printf "compiled code: %s \n") t)
