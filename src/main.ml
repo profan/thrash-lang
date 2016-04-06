@@ -11,11 +11,8 @@ let call_with_input_channel fn file = call_with_channel (open_in, close_in) fn f
 
 let main ch =
     try
-        let lexbuf = Lexing.from_channel ch in
-        let token_stream = Grammar_parser.main Grammar_lexer.token lexbuf in
-            List.iter (fun (t, str) ->
-                List.iter (fun (ti) ->
-                    Printf.printf "result: %d \n" ti) t) token_stream
+        Lexing.from_channel ch
+        |> Grammar_parser.main Grammar_lexer.token
     with 
         | Grammar_lexer.Eof -> print_string "EOF"
         (* | Dyp.Syntax_error ->
@@ -23,4 +20,7 @@ let main ch =
 
 let filename = "tests/first.calc";;
 Printf.printf "executing: %s \n" filename;;
-call_with_input_channel (fun ch -> main ch) filename;;
+let ast = call_with_input_channel (fun ch -> main ch) filename;;
+
+let compiled = eval' ast;;
+Printf.printf "produced code: %s \n" compiled;;

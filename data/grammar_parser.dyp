@@ -27,8 +27,9 @@ expr :
 
   | INT<x>                                            { Int(x) }                  pi
   | VAR<x>                                            { Var(x) }                  pi
+  | BOOL<x>                                           { Bool(x) }                 pi
   | MINUS expr(=pi)<x>                                { UnaryOp(MINUS, x) }       pi
-  | LPAREN expr<x> RPAREN                             { eval' x }                 pi
+  | LPAREN expr<x> RPAREN                             { x }                       pi
 
   | expr(<=pp)<x> PLUS expr(<pp)<y>                   { BinOp(PLUS, x, y) }       pp
   | expr(<=pp)<x> MINUS expr(<pp)<y>                  { BinOp(MINUS, x, y) }      pp
@@ -38,9 +39,8 @@ expr :
   | expr(<=pt)<x> GT expr(<pt)<y>                     { BinOp(GT, x, y) }         pt
   | expr(<=pt)<x> EQ expr(<pt)<y>                     { BinOp(EQ, x, y) }         pt
 
-  | IF expr<cond> DO expr<thn> ELSE expr<els> END     { thn }                     pi
-  | WHILE expr<cond> DO expr<body> END                { body }                    pi
-  | FOR expr<cond> IN expr<list> DO expr<body> END    { body }                    pi
-  | LBRACKET expr [COMMA expr {$2}]* RBRACKET         { 0 }                       pi
-  | LET VAR EQ expr<e>                                { e }                       pi
-
+  | IF expr<cond> DO expr<thn> ELSE expr<els> END     { If(cond, thn, els) }      pi
+  | WHILE expr<cond> DO expr<body> END                { While(cond, body) }       pi
+  | FOR expr<cond> IN expr<list> DO expr<body> END    { For(cond, list, body) }   pi
+  | LBRACKET expr [COMMA expr {$2}]* RBRACKET         { List($2::$3) }            pi
+  | LET VAR<var> EQ expr<e>                           { Let(var, e) }             pi
