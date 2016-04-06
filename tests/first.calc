@@ -30,6 +30,11 @@ else
 	x
 end
 
+let x = 0
+while x < 100 do
+	let x = x + x
+end
+
 let result = if x < 25 and y > 0 do
 	x - 25
 else

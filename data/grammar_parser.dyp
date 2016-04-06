@@ -17,7 +17,7 @@
 %token COMMA SEMICOLON
 %token EOF EOL
 
-%relation pi<pt<pp
+%relation pi<pt<pp<pl
 
 %start main
 
@@ -39,7 +39,7 @@ expr :
   | expr(<=pt)<x> DIV expr(<pt)<y>                    { BinOp("/", x, y) }      pt
   | expr(<=pt)<x> LT expr(<pt)<y>                     { BinOp("<", x, y) }      pi
   | expr(<=pt)<x> GT expr(<pt)<y>                     { BinOp(">", x, y) }      pi
-  | expr(<=pt)<x> EQ expr(<pt)<y>                     { BinOp("=", x, y) }      pi
+  | expr(<=pl)<x> EQ expr(<pl)<y>                     { BinOp("=", x, y) }      pl
   | expr(<=pt)<x> AND expr(<pt)<y>                    { BinOp("and", x, y) }    pi
   | expr(<=pt)<x> OR expr(<pt)<y>                     { BinOp("or", x, y) }     pi
 
@@ -47,4 +47,4 @@ expr :
   | WHILE expr<cond> DO expr<body> END                { While(cond, body) }     pi
   | FOR expr<cond> IN expr<list> DO expr<body> END    { For(cond, list, body) } pi
   | LBRACKET expr [COMMA expr {$2}]* RBRACKET         { List($2::$3) }          pi
-  | LET VAR<var> EQ expr<e>                           { Let(var, e) }           pi
+  | LET VAR<var> EQ expr<e>                           { Let(var, e) }           pl

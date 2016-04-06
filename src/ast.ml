@@ -1,5 +1,3 @@
-open Util
-
 type value =
     | Bool of bool
     | Int of int
@@ -21,7 +19,7 @@ let rec print_ast' : type a. a expr' -> string = function
     | Value (Int i) -> (string_of_int i)
     | List (things) ->
         List.map (fun (e) -> (print_ast' e)) things
-        |> reduce (fun acc e -> acc ^ " " ^ e)
+        |> Util.reduce (fun acc e -> acc ^ " " ^ e)
         |> Printf.sprintf "(List %s)"
     | If (b, l, r) ->
         Printf.sprintf "(If %s %s %s)" (print_ast' b) (print_ast' l) (print_ast' r)
@@ -42,7 +40,7 @@ let rec eval' : type a. a expr' -> string = function
     | Value (Int i) -> (string_of_int i)
     | List (things) ->
         List.map (fun (e) -> (eval' e)) things
-        |> reduce (fun acc e -> acc ^ " " ^ e)
+        |> Util.reduce (fun acc e -> acc ^ " " ^ e)
         |> Printf.sprintf "%s;"
     | If (b, l, r) ->
         Printf.sprintf "if [ %s ]; then \n %s \nelse\n %s \nfi" (eval' b) (eval' l) (eval' r)
