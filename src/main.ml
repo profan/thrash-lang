@@ -20,6 +20,12 @@ let main ch =
 
 let filename = "tests/first.calc";;
 Printf.printf "executing: %s \n" filename;;
-call_with_input_channel (fun ch -> main ch) filename
-    |> List.iter (fun (t, str) ->
-        List.iter (fun (ti) -> Ast.eval' ti |> Printf.printf "compiled code: %s \n") t)
+
+let print ast f =
+    List.iter (fun (t, str) ->
+        List.iter (fun (ti) -> f ti
+        |> Printf.printf "\n%s \n") t) ast;;
+
+let ast = call_with_input_channel (fun ch -> main ch) filename in
+    print ast Ast.eval';
+    print ast Ast.print_ast';;
