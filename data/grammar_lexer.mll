@@ -26,6 +26,8 @@ rule token = parse
   | "end"               { END }
   | "while"             { WHILE }
   | "for"               { FOR }
+  | "break"             { BREAK }
+  | "continue"          { CONTINUE }
   | "let"               { LET }
   | "in"                { IN }
   | "and"               { AND }

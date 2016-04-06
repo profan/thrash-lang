@@ -17,3 +17,21 @@ while 10 do
 		45
 	end
 end
+
+if x = 25 do
+	30
+else
+	25
+end
+
+if x = y do
+	x + y
+else
+	x
+end
+
+if x < 25 and y > 0 do
+	x - 25
+else
+	25
+end

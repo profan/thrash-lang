@@ -3,11 +3,6 @@ let reduce f lst =
     | head::tail -> List.fold_left f head tail
     | [] -> failwith "Empty List?"
 
-type _ value' =
-    | Bool : bool -> bool value'
-    | Var : string -> string value'
-    | Int : int -> int value'
-
 type value =
     | Bool of bool
     | Int of int
@@ -22,6 +17,7 @@ type _ expr' =
     | BinOp : string * 'a expr' * 'a expr' -> 'a expr'
     | UnaryOp : string * 'a expr' -> 'a expr'
     | Let : string * 'a expr' -> 'a expr'
+    | UnaryCmd : 'a expr' -> 'a expr'
 
 let rec print_ast' : type a. a expr' -> string = function
     | Var (var) -> var
@@ -45,7 +41,7 @@ let rec print_ast' : type a. a expr' -> string = function
         Printf.sprintf "(Let %s %s)" var (print_ast' e)
 
 let rec eval' : type a. a expr' -> string = function
-    | Var (var) -> var
+    | Var (var) -> "$" ^ var
     | Value (Bool b) -> (string_of_bool b)
     | Value (Int i) -> (string_of_int i)
     | List (things) ->
@@ -53,14 +49,30 @@ let rec eval' : type a. a expr' -> string = function
         |> reduce (fun acc e -> acc ^ " " ^ e)
         |> Printf.sprintf "%s;"
     | If (b, l, r) ->
-        Printf.sprintf "if %s then \n %s \nelse\n %s \nfi" (eval' b) (eval' l) (eval' r)
+        Printf.sprintf "if [ %s ]; then \n %s \nelse\n %s \nfi" (eval' b) (eval' l) (eval' r)
     | While (cond, body) ->
-        Printf.sprintf "while %s; do \n%s \ndone" (eval' cond) (eval' body)
+        Printf.sprintf "while [ %s ]; do \n%s \ndone" (eval' cond) (eval' body)
     | For (var, cond, body) ->
         Printf.sprintf "for %s in %s \ndo\n %s \ndone" (eval' var) (eval' cond) (eval' body)
+    | BinOp (("and" | "or") as op, a, b) ->
+        let new_op = match op with
+        | "and" -> "-a"
+        | "or" -> "-o"
+        in
+            Printf.sprintf "%s %s %s" (eval' a) new_op (eval' b)
+    | BinOp (op, a, Value(Int(b))) ->
+        let new_op = match op with
+        | "=" -> "-eq"
+        | ">" -> "-gt"
+        | "<" -> "-lt"
+        | _ -> op
+        in
+            Printf.sprintf "%s %s %d" (eval' a) new_op b
+    | BinOp ("=", a, b) ->
+        Printf.sprintf "%s == %s" (eval' a) (eval' b)
     | BinOp (op, a, b) ->
         Printf.sprintf "%s %s %s" (eval' a) op (eval' b)
     | UnaryOp (op, a) ->
         Printf.sprintf "%s%s" op (eval' a)
     | Let (var, e) ->
-        Printf.sprintf "%s=%s" var (eval' e)
+        Printf.sprintf "%s = %s" var (eval' e)
