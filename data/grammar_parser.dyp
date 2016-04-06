@@ -27,7 +27,7 @@ expr :
 
   | INT<x>                                            { Int(x) }                  pi
   | VAR<x>                                            { Var(x) }                  pi
-  | MINUS expr(=pi)<x>                                { Neg(x) }                  pi
+  | MINUS expr(=pi)<x>                                { UnaryOp(MINUS, x) }       pi
   | LPAREN expr<x> RPAREN                             { eval' x }                 pi
 
   | expr(<=pp)<x> PLUS expr(<pp)<y>                   { BinOp(PLUS, x, y) }       pp
