@@ -9,6 +9,7 @@ type _ expr' =
     | If : 'a expr' * 'a expr' * 'a expr' -> 'a expr'
     | While : 'a expr' * 'a expr' -> 'a expr'
     | For : 'a expr' * 'a expr' * 'a expr' -> 'a expr'
+    | Cond : ('a expr' * 'a expr') list -> 'a expr'
     | BinOp : string * 'a expr' * 'a expr' -> 'a expr'
     | UnaryOp : string * 'a expr' -> 'a expr'
     | Let : string * 'a expr' -> 'a expr'
@@ -27,6 +28,10 @@ let rec print_ast' : type a. a expr' -> string = function
         Printf.sprintf "(While %s %s)" (print_ast' cond) (print_ast' body)
     | For (var, cond, body) ->
         Printf.sprintf "(For %s %s %s)" (print_ast' var) (print_ast' cond) (print_ast' body)
+    | Cond (clauses) ->
+        List.map (fun (cnd, thn) -> ((print_ast' cnd), (print_ast' thn))) clauses
+        |> List.fold_left (fun acc (cnd, thn) -> acc ^ " (" ^ cnd ^ " " ^ thn ^ ")") ""
+        |> Printf.sprintf "(Cond%s)"
     | BinOp (op, a, b) ->
         Printf.sprintf "(BinOp %s %s %s)" op (print_ast' a) (print_ast' b)
     | UnaryOp (op, a) ->
@@ -48,6 +53,10 @@ let rec eval' : type a. a expr' -> string = function
         Printf.sprintf "while [ %s ]; do \n%s \ndone" (eval' cond) (eval' body)
     | For (var, cond, body) ->
         Printf.sprintf "for %s in %s \ndo\n %s \ndone" (eval' var) (eval' cond) (eval' body)
+    | Cond (clauses) ->
+        List.map (fun (cnd, thn) -> ((eval' cnd), (eval' thn))) clauses
+        |> List.fold_left (fun acc (cnd, thn) -> acc ^ cnd ^ thn) ""
+        |> Printf.sprintf "%s;"
     | BinOp (("and" | "or") as op, a, b) ->
         let new_op = match op with
         | "and" -> "-a"

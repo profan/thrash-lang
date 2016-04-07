@@ -35,6 +35,11 @@ while x < 100 do
 	let x = x + x
 end
 
+cond
+	5 > 10 -> true
+	x > y -> false
+end
+
 let result = if x < 25 and y > 0 do
 	x - 25
 else

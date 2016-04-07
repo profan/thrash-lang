@@ -26,6 +26,8 @@ rule token = parse
   | "end"               { END }
   | "while"             { WHILE }
   | "for"               { FOR }
+  | "cond"              { COND }
+  | "match"             { MATCH }
   | "break"             { BREAK }
   | "continue"          { CONTINUE }
   | "let"               { LET }
@@ -35,6 +37,7 @@ rule token = parse
   | '='                 { EQ }
   | '<'                 { LT }
   | '>'                 { GT }
+  | "->"                { ARROW }
   | ';'                 { SEMICOLON }
   | ','                 { COMMA }
   | ['a'-'z']+ as lxm   { VAR(lxm) }
