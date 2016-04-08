@@ -9,6 +9,37 @@ Probably put the grammar in not-parser-generator form somewhere later.
 
 As an important side note, **no-one** should **ever** use this.
 
+Example
+-----------
+```
+let somevar = 125
+let somebool = true
+
+if true do
+    25
+else
+    15
+end
+
+for x in [1, 2, 3, 4] do
+    65
+end
+
+while 10 do
+    if 25 do
+        35
+    else
+        45
+    end
+end
+
+if x = 25 do
+    30
+else
+    25
+end
+```
+
 Structure
 -----------
 * **src** folder holds source files for the compiler, currently just the main which parses and evaluates the single test source file.

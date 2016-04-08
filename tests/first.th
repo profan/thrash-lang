@@ -1,6 +1,7 @@
 let somevar = 125
+let somebool = true
 
-if 10 do
+if somebool do
 	25
 else
 	15
