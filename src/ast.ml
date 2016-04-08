@@ -2,6 +2,7 @@ type value =
     | Bool of bool
     | Int of int
 
+(* we probably don't need this as a GADT right now, but nonetheless. *)
 type _ expr' =
     | Var : string -> 'a expr'
     | Value : value -> 'a expr'

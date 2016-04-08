@@ -6,6 +6,7 @@
 
 %token <int> INT
 %token <bool> BOOL
+%token <string> OP
 %token <string> VAR
 %token LPAREN RPAREN 
 %token LBRACKET RBRACKET
@@ -27,11 +28,11 @@ main : expr * EOF { $1 }
 
 expr :
 
-  | VAR<x>                                            { Var(x) }                pi
-  | INT<x>                                            { Value(Int(x)) }         pi
-  | BOOL<x>                                           { Value(Bool(x)) }        pi
-  | MINUS expr(=pi)<x>                                { UnaryOp("-", x) }       pi
-  | LPAREN expr<x> RPAREN                             { x }                     pi
+  | VAR<x>                                                { Var(x) }                pi
+  | INT<x>                                                { Value(Int(x)) }         pi
+  | BOOL<x>                                               { Value(Bool(x)) }        pi
+  | MINUS expr(=pi)<x>                                    { UnaryOp("-", x) }       pi
+  | LPAREN expr<x> RPAREN                                 { x }                     pi
 
   | expr(<=pp)<x> PLUS expr(<pp)<y>                       { BinOp("+", x, y) }      pp
   | expr(<=pp)<x> MINUS expr(<pp)<y>                      { BinOp("-", x, y) }      pp

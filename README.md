@@ -4,6 +4,8 @@ A small language project for a thing which is intended to compile to bash, mostl
 
 This will probably end up being a horrific melting pot of features over time.
 
+As an important side note, **no-one** should **ever** use this.
+
 Structure
 -----------
 * **src** folder holds source files for the compiler, currently just the main which parses and evaluates the single test source file.
