@@ -18,7 +18,7 @@ let main ch =
         (* | Dyp.Syntax_error ->
             let (startpos, endpos) = Dyp.dyplex_lexbuf_position in *) 
 
-let filename = "tests/first.calc";;
+let filename = "tests/first.th";;
 Printf.printf "executing: %s \n" filename;;
 
 let print ast f =
