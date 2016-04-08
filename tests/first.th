@@ -11,7 +11,9 @@ for x in [1, 2, 3, 4] do
 	65
 end
 
-while 10 do
+let somefunction (var1, var2) = var1 + var2
+
+while somefunction(10) do
 	if 25 do
 		35
 	else

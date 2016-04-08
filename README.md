@@ -25,12 +25,8 @@ for x in [1, 2, 3, 4] do
     65
 end
 
-while 10 do
-    if 25 do
-        35
-    else
-        45
-    end
+while somefunction(25) do
+	printf(10)
 end
 
 if x = 25 do

@@ -7,9 +7,14 @@
 
 }
 
+let blank = [' ' '\t' '\n']
+let digit = ['0'-'9']
+let alpha = ['a'-'z' 'A'-'Z']
+let id = alpha (alpha | digit | '_')*
+
 rule token = parse
-    [' ' '\t' '\n']     { token lexbuf } (* skip blanks, also newlines *)
-  | ['0'-'9']+ as lxm   { INT(int_of_string lxm) }
+    blank               { token lexbuf } (* skip blanks, also newlines *)
+  | digit+ as lxm       { INT(int_of_string lxm) }
   | '+'                 { PLUS }
   | '-'                 { MINUS }
   | '*'                 { TIMES }
@@ -40,7 +45,7 @@ rule token = parse
   | "->"                { ARROW }
   | ';'                 { SEMICOLON }
   | ','                 { COMMA }
-  | ['a'-'z']+ as lxm   { VAR(lxm) }
+  | id as lxm           { VAR(lxm) }
   | eof                 { EOF }
   | 'q' | 'e'           { raise Eof }
   | _                   { raise (SyntaxError("Unexpected char: " ^ Lexing.lexeme lexbuf)) }

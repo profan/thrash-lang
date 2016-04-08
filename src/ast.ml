@@ -13,7 +13,11 @@ type _ expr' =
     | Cond : ('a expr' * 'a expr') list -> 'a expr'
     | BinOp : string * 'a expr' * 'a expr' -> 'a expr'
     | UnaryOp : string * 'a expr' -> 'a expr'
+    | LetFn : string * string list * 'a expr' -> 'a expr'
+    | Call : string * 'a expr' list -> 'a expr'
     | Let : string * 'a expr' -> 'a expr'
+
+let print_params params = Util.reduce (fun acc e -> acc ^ " " ^ e) params
 
 let rec print_ast' : type a. a expr' -> string = function
     | Var (var) -> var
@@ -37,6 +41,10 @@ let rec print_ast' : type a. a expr' -> string = function
         Printf.sprintf "(BinOp %s %s %s)" op (print_ast' a) (print_ast' b)
     | UnaryOp (op, a) ->
         Printf.sprintf "(UnaryOp %s %s)" op (print_ast' a)
+    | LetFn (fn, params, e) ->
+        Printf.sprintf "(LetFn %s %s %s)" fn (print_params params) (print_ast' e)
+    | Call (fn, args) ->
+        Printf.sprintf "(Call %s%s)" fn (List.fold_left (fun acc e -> acc ^ " " ^ (print_ast' e)) "" args)
     | Let (var, e) ->
         Printf.sprintf "(Let %s %s)" var (print_ast' e)
 
@@ -81,6 +89,14 @@ let rec eval' : type a. a expr' -> string = function
         Printf.sprintf "%s %s %s" (eval' a) op (eval' b)
     | UnaryOp (op, a) ->
         Printf.sprintf "%s%s" op (eval' a)
+    | LetFn (fn, params, e) ->
+        let (_, decls) = List.fold_left (fun (c, v) e ->
+            (c + 1, v ^ Printf.sprintf "local $%s=$%d \n" e c))
+            (0, "") params
+        in
+            Printf.sprintf "%s() {\n%s%s\n}" fn decls (eval' e)
+    | Call (fn, args) ->
+        Printf.sprintf "%s%s" fn (List.fold_left (fun acc e -> acc ^ " " ^ (print_ast' e)) "" args)
     | Let (var, If(b, l, r)) ->
         Printf.sprintf "%s=\"\"" var
     | Let (var, e) ->

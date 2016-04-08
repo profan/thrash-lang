@@ -26,27 +26,39 @@
 
 main : expr * EOF { $1 }
 
+opt_arglist :
+  | LPAREN [VAR [COMMA VAR {$2}]*{$1::$2}]<args> RPAREN    { args }                   pl
+  | LPAREN VAR<a> RPAREN                                   { [a] }                    pl
+  | LPAREN RPAREN                                          { [] }                     pl
+
+fn_arglist :
+  | LPAREN [expr [COMMA expr {$2}]*{$1::$2}]<args> RPAREN { args }                   pl
+  | LPAREN expr<a> RPAREN                                  { [a] }                    pl 
+  | LPAREN RPAREN                                          { [] }                     pl
+
 expr :
 
-  | VAR<x>                                                { Var(x) }                pi
-  | INT<x>                                                { Value(Int(x)) }         pi
-  | BOOL<x>                                               { Value(Bool(x)) }        pi
-  | MINUS expr(=pi)<x>                                    { UnaryOp("-", x) }       pi
-  | LPAREN expr<x> RPAREN                                 { x }                     pi
+  | VAR<x>                                                { Var(x) }                  pi
+  | INT<x>                                                { Value(Int(x)) }           pi
+  | BOOL<x>                                               { Value(Bool(x)) }          pi
+  | MINUS expr(=pi)<x>                                    { UnaryOp("-", x) }         pi
+  | LPAREN expr<x> RPAREN                                 { x }                       pi
 
-  | expr(<=pp)<x> PLUS expr(<pp)<y>                       { BinOp("+", x, y) }      pp
-  | expr(<=pp)<x> MINUS expr(<pp)<y>                      { BinOp("-", x, y) }      pp
-  | expr(<=pt)<x> TIMES expr(<pt)<y>                      { BinOp("*", x, y) }      pt
-  | expr(<=pt)<x> DIV expr(<pt)<y>                        { BinOp("/", x, y) }      pt
-  | expr(<=pt)<x> LT expr(<pt)<y>                         { BinOp("<", x, y) }      pi
-  | expr(<=pt)<x> GT expr(<pt)<y>                         { BinOp(">", x, y) }      pi
-  | expr(<=pl)<x> EQ expr(<pl)<y>                         { BinOp("=", x, y) }      pl
-  | expr(<=pt)<x> AND expr(<pt)<y>                        { BinOp("and", x, y) }    pi
-  | expr(<=pt)<x> OR expr(<pt)<y>                         { BinOp("or", x, y) }     pi
+  | expr(<=pp)<x> PLUS expr(<pp)<y>                       { BinOp("+", x, y) }        pp
+  | expr(<=pp)<x> MINUS expr(<pp)<y>                      { BinOp("-", x, y) }        pp
+  | expr(<=pt)<x> TIMES expr(<pt)<y>                      { BinOp("*", x, y) }        pt
+  | expr(<=pt)<x> DIV expr(<pt)<y>                        { BinOp("/", x, y) }        pt
+  | expr(<=pt)<x> LT expr(<pt)<y>                         { BinOp("<", x, y) }        pi
+  | expr(<=pt)<x> GT expr(<pt)<y>                         { BinOp(">", x, y) }        pi
+  | expr(<=pl)<x> EQ expr(<pl)<y>                         { BinOp("=", x, y) }        pl
+  | expr(<=pt)<x> AND expr(<pt)<y>                        { BinOp("and", x, y) }      pi
+  | expr(<=pt)<x> OR expr(<pt)<y>                         { BinOp("or", x, y) }       pi
 
-  | IF expr<cond> DO expr<thn> ELSE expr<els> END         { If(cond, thn, els) }    pi
-  | WHILE expr<cond> DO expr<body> END                    { While(cond, body) }     pi
-  | FOR expr<cond> IN expr<list> DO expr<body> END        { For(cond, list, body) } pi
-  | COND expr ARROW expr [expr ARROW expr {$1, $3}]* END  { Cond(($2, $4)::$5) }    pi
-  | LBRACKET expr [COMMA expr {$2}]* RBRACKET             { List($2::$3) }          pi
-  | LET VAR<var> EQ expr<e>                               { Let(var, e) }           pl
+  | IF expr<cond> DO expr<thn> ELSE expr<els> END         { If(cond, thn, els) }            pi
+  | WHILE expr<cond> DO expr<body> END                    { While(cond, body) }             pi
+  | FOR expr<cond> IN expr<list> DO expr<body> END        { For(cond, list, body) }         pi
+  | COND expr ARROW expr [expr ARROW expr {$1, $3}]* END  { Cond(($2, $4)::$5) }            pi
+  | LBRACKET expr [COMMA expr {$2}]* RBRACKET             { List($2::$3) }                  pi
+  | LET VAR<var> EQ expr<e>                               { Let(var, e) }                   pl
+  | LET VAR<var> opt_arglist<args> EQ expr<body>          { LetFn(var, args, body) }        pl
+  | VAR<fn> fn_arglist<args>                              { Call(fn, args) }                pl
