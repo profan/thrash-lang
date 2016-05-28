@@ -27,4 +27,4 @@ let print ast f =
         |> Printf.printf "\n%s \n") t) ast;;
 
 let ast = call_with_input_channel (fun ch -> main ch) filename in
-    print ast Ast.eval; print ast Ast.print_ast
+    print ast Ast.eval; print ast Ast.show_expr

@@ -2,6 +2,8 @@ type value =
     | Bool of bool
     | Int of int
 
+[@@deriving show]
+
 (* we probably don't need this as a GADT right now, but nonetheless. *)
 type expr =
     | Var of string
@@ -17,36 +19,7 @@ type expr =
     | Call of string * expr list
     | Let of string * expr
 
-let print_params params = Util.reduce (fun acc e -> acc ^ " " ^ e) params
-
-let rec print_ast : expr -> string = function
-    | Var (var) -> var
-    | Value (Bool b) -> (string_of_bool b)
-    | Value (Int i) -> (string_of_int i)
-    | List (things) ->
-        List.map (fun (e) -> (print_ast e)) things
-        |> Util.reduce (fun acc e -> acc ^ " " ^ e)
-        |> Printf.sprintf "(List %s)"
-    | If (b, l, r) ->
-        Printf.sprintf "(If %s %s %s)" (print_ast b) (print_ast l) (print_ast r)
-    | While (cond, body) ->
-        Printf.sprintf "(While %s %s)" (print_ast cond) (print_ast body)
-    | For (var, cond, body) ->
-        Printf.sprintf "(For %s %s %s)" (print_ast var) (print_ast cond) (print_ast body)
-    | Cond (clauses) ->
-        List.map (fun (cnd, thn) -> ((print_ast cnd), (print_ast thn))) clauses
-        |> List.fold_left (fun acc (cnd, thn) -> acc ^ " (" ^ cnd ^ " " ^ thn ^ ")") ""
-        |> Printf.sprintf "(Cond%s)"
-    | BinOp (op, a, b) ->
-        Printf.sprintf "(BinOp %s %s %s)" op (print_ast a) (print_ast b)
-    | UnaryOp (op, a) ->
-        Printf.sprintf "(UnaryOp %s %s)" op (print_ast a)
-    | LetFn (fn, params, e) ->
-        Printf.sprintf "(LetFn %s %s %s)" fn (print_params params) (print_ast e)
-    | Call (fn, args) ->
-        Printf.sprintf "(Call %s%s)" fn (List.fold_left (fun acc e -> acc ^ " " ^ (print_ast e)) "" args)
-    | Let (var, e) ->
-        Printf.sprintf "(Let %s %s)" var (print_ast e)
+[@@deriving show]
 
 let rec eval : expr -> string = function
     | Var (var) -> "$" ^ var
@@ -96,7 +69,7 @@ let rec eval : expr -> string = function
         in
             Printf.sprintf "%s() {\n%s%s\n}" fn decls (eval e)
     | Call (fn, args) ->
-        Printf.sprintf "%s%s" fn (List.fold_left (fun acc e -> acc ^ " " ^ (print_ast e)) "" args)
+        Printf.sprintf "%s%s" fn (List.fold_left (fun acc e -> acc ^ " " ^ (eval e)) "" args)
     | Let (var, If(b, l, r)) ->
         Printf.sprintf "%s=\"\"" var
     | Let (var, e) ->
